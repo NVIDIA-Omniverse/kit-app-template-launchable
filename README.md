@@ -21,7 +21,7 @@ This guide will get you started with a Visual Studio Code instance with Kit App 
 > Please note that Brev instances are pay-by-the hour. To make the best use of credits, stop instances when they are not in use. Stopped instances have a smaller storage charge.
 
 ### Deploy
-1. Click this Deploy Now button [![ Click here to deploy.](https://brev-assets.s3.us-west-1.amazonaws.com/nv-lb-dark.svg)](https://brev.nvidia.com/launchable/deploy/now?launchableID=env-34WJ5rVD6l0k1OvA6nV0ADM8f3S)
+1. Click this Deploy Now button [![ Click here to deploy.](https://brev-assets.s3.us-west-1.amazonaws.com/nv-lb-dark.svg)](https://brev.nvidia.com/launchable/deploy/now?launchableID=env-34WaXIMkLzhJElDInOutSaC3gko)
 2. Click the Deploy Launchable button to spin up the instance.
 3. Wait for the instance to be fully ready on Brev: running, built, and the setup script has completed (first launch can take a while)
 4. On the Brev instance page, scroll to the TCP/UDP ports section.
