@@ -21,7 +21,7 @@ This guide will get you started with a Visual Studio Code instance with Kit App 
 > Please note that Brev instances are pay-by-the hour. To make the best use of credits, stop instances when they are not in use. Stopped instances have a smaller storage charge.
 
 ### Deploy
-1. Click this Deploy Now button [![ Click here to deploy.](https://brev-assets.s3.us-west-1.amazonaws.com/nv-lb-dark.svg)](https://brev.nvidia.com/launchable/deploy/now?launchableID=env-34WaXIMkLzhJElDInOutSaC3gko)
+1. Click this Deploy Now button [![ Click here to deploy.](https://brev-assets.s3.us-west-1.amazonaws.com/nv-lb-dark.svg)](https://brev.nvidia.com/launchable/deploy/now?launchableID=env-34fCURommjwcJI3NUiMzlTTyJKS)
 2. Click the Deploy Launchable button to spin up the instance.
 3. Wait for the instance to be fully ready on Brev: running, built, and the setup script has completed (first launch can take a while)
 4. On the Brev instance page, scroll to the TCP/UDP ports section.
@@ -86,13 +86,15 @@ These instructions describe how to create a customized Launchable, similar to th
 1. Log in to the [Brev](https://login.brev.nvidia.com/signin) website.
 2. Go to the Launchables category.
 3. Click the **Create Launchable** button.
-4. Choose the "I don't have any code files" option.
+4. Choose the "I have code files in a git repository" option.
+```
+https://github.com/NVIDIA-Omniverse/kit-app-template-launchable
+```
 5. Choose **VM Mode - Basic VM with Python installed**, then click Next.
 6. On the next page, add a setup script. Under the *Paste Script* tab, add this code:
 ```bash
 #!/bin/bash
-git clone https://github.com/NVIDIA-Omniverse/kit-app-template-launchable
-cd kit-app-template-launchable
+cd /home/ubuntu/kit-app-template-launchable
 docker compose up -d
 ```
 7. Click Next.
