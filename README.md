@@ -21,14 +21,15 @@ This guide will get you started with a Visual Studio Code instance with Kit App 
 > Please note that Brev instances are pay-by-the hour. To make the best use of credits, stop instances when they are not in use. Stopped instances have a smaller storage charge.
 
 ### Deploy
-1. Click this Deploy Now button [![ Click here to deploy.](https://brev-assets.s3.us-west-1.amazonaws.com/nv-lb-dark.svg)](https://brev.nvidia.com/launchable/deploy/now?launchableID=env-34fCURommjwcJI3NUiMzlTTyJKS)
-2. Click the Deploy Launchable button to spin up the instance.
+1. Click this Deploy Now button -> [![ Click here to deploy.](https://brev-assets.s3.us-west-1.amazonaws.com/nv-lb-dark.svg)](https://brev.nvidia.com/launchable/deploy/now?launchableID=env-34fCURommjwcJI3NUiMzlTTyJKS)
+2. In Brev, click the Deploy Launchable button to spin up the instance.
 3. Wait for the instance to be fully ready on Brev: running, built, and the setup script has completed (first launch can take a while)
-4. On the Brev instance page, scroll to the TCP/UDP ports section.
-5. Click the link for port 80 (HTTP) to open Visual Studio Code Server.
-6. The default password is `password`. This can be modified.
-7. Inside Visual Studio Code, follow the detailed guide below. 
-8. Now you're in the Visual Studio Code dev environment! 
+4. Open the `Logs` tab to view the setup script output. At the end of this output, a password will be printed for the Visual Studio Code server. Save this somewhere safe.
+5. On the Brev instance page, scroll to the TCP/UDP ports section.
+6. Click the link for port 80 (HTTP) to open Visual Studio Code Server.
+7. Enter the password from the Logs tab in step 4.
+8. Inside Visual Studio Code, follow the detailed guide below. 
+9. Now you're in the Visual Studio Code dev environment! 
 
 ## Detailed Guides
 ### Running Kit App Template - Detailed Guide
@@ -94,28 +95,31 @@ https://github.com/NVIDIA-Omniverse/kit-app-template-launchable
 6. On the next page, add a setup script. Under the *Paste Script* tab, add this code:
 ```bash
 #!/bin/bash
+export VSCODE_PASSWORD=your_password # replace with a secure password or generate it securely
 cd /home/ubuntu/kit-app-template-launchable
 docker compose up -d
 ```
-7. Click Next.
-8. Under "Do you want a Jupyter Notebook experience" select "No, I don't want Jupyter".
-9. Select the TCP/UDP ports tab.
-10. Expose the following ports (for Visual Studio Code Server and Kit App Streaming). You can choose to limit these ports to be accessible only from certain IPs as well.
+7. The VSCode container expects a password provided via the `$VSCODE_PASSWORD` environment variable. Replace `your_password` above with your desired password, or generate it securely.
+8. Click Next.
+9. Under "Do you want a Jupyter Notebook experience" select "No, I don't want Jupyter".
+10. Select the TCP/UDP ports tab.
+11. Expose the following ports (for Visual Studio Code Server and Kit App Streaming). You can choose to limit these ports to be accessible only from certain IPs as well.
 ```
 80
+1024
 47998
 49100
 ```
-11. Click Next.
-12. Choose your desired compute.
+12. Click Next.
+13. Choose your desired compute.
 
 > [!NOTE]
 > GPUs with RT cores are required for Kit App Streaming. 
 
 > [!IMPORTANT]
 > The project is not currently compatible with Crusoe instances. AWS has been tested and is used for the example launchable.
-13. Choose disk storage, then click Next.
-14. Enter a name, then select **Create Launchable**
+14. Choose disk storage, then click Next.
+15. Enter a name, then select **Create Launchable**
 
 > [!Note]
 > To use a specific [branch of kit-app-template](https://github.com/NVIDIA-Omniverse/kit-app-template/branches), specify the branch name for the environment variable `KIT_APP_TEMPLATE_BRANCH` before building:

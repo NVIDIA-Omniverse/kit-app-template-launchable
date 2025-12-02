@@ -20,7 +20,7 @@ volumes:
 
 services:
 
-  # This is the landing container.
+  # This is the landing container. Expects $VSCODE_PASSWORD to be set.
   vscode:
     container_name: vscode
     restart: unless-stopped
@@ -43,8 +43,8 @@ services:
       - PUID=0
       - PGID=0
       - TZ=Etc/UTC
-      - PASSWORD=password #optional
-      - SUDO_PASSWORD=password #optional
+      - PASSWORD=$VSCODE_PASSWORD #optional
+      - SUDO_PASSWORD=$VSCODE_PASSWORD #optional
       - DEFAULT_WORKSPACE=/config/workspace
       - KUBECONFIG=/kube/config
 
