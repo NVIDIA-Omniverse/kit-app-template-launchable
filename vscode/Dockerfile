@@ -41,13 +41,15 @@ RUN apt update && \
 
 USER ubuntu
 
+ENV WORKSPACE_DIR=/home/ubuntu/workspace
+
 WORKDIR /home/ubuntu/workspace
 
 ARG KIT_APP_TEMPLATE_BRANCH=108.0
 RUN git clone -b ${KIT_APP_TEMPLATE_BRANCH} https://github.com/NVIDIA-Omniverse/kit-app-template.git
 
-COPY ./README.md ${WORKSPACE_DIR}/README.md
-COPY ./settings.json ${WORKSPACE_DIR}/.vscode/settings.json
+COPY --chown=ubuntu:ubuntu ./README.md ${WORKSPACE_DIR}/README.md
+COPY --chown=ubuntu:ubuntu ./settings.json ${WORKSPACE_DIR}/.vscode/settings.json
 
 RUN code-server \
     --install-extension ms-python.python \

@@ -1,7 +1,4 @@
 {
-    // your other settings ...
-    "workbench.editorAssociations":
-        {
-            ".md": "vscode.markdown.preview.editor"
-        }
+    "workbench.startupEditor": "readme",
+    "simpleBrowser.focusLockIndicator.enabled": false
 }

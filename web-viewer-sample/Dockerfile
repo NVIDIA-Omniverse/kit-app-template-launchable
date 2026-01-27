@@ -15,18 +15,34 @@
 
 FROM nvcr.io/nvidia/base/ubuntu:22.04_20240212
 
-WORKDIR /app/wvs
+WORKDIR /app
 
 RUN apt update && apt install -y git jq dnsutils curl
 
-# Install Node.js 22 directly
+# Install Node.js 22
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs
 
-COPY web-viewer-sample /app/wvs
+# Set up npm registries for NVIDIA packages
+RUN echo 'registry=https://registry.npmjs.org/' > /root/.npmrc && \
+    echo '@nvidia:registry=https://edge.urm.nvidia.com/artifactory/api/npm/omniverse-client-npm-local/' >> /root/.npmrc
 
-RUN cd /app/wvs && \
-    npm install --ignore-scripts
-    
+# Install create-ov-web-sample
+RUN npm install -g @nvidia/create-ov-web-sample@1.13.4 --ignore-scripts
+
+# Generate web-viewer-sample
+RUN create-ov-web-sample --name="web-viewer-sample" --sample=viewport-only --external --outputDir=/app
+
+WORKDIR /app/web-viewer-sample
+
+# Configure Vite to use /viewer/ as base path for nginx reverse proxy and allow all hosts
+RUN sed -i "s/export default defineConfig({/export default defineConfig({\n  base: '\/viewer\/',\n  server: {\n    allowedHosts: true\n  },/" vite.config.ts
+
+# Add configurable stream settings with placeholder defaults (replaced at runtime by entrypoint)
+RUN sed -i "s/signalingServer: '127.0.0.1',/signalingServer: __SIGNALING_SERVER__,\n            signalingPort: __SIGNALING_PORT__,\n            mediaServer: '__MEDIA_SERVER__',\n            forceWSS: __FORCE_WSS__,/" src/main.ts
+
+# Install dependencies
+RUN npm install --ignore-scripts
+
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["bash", "/entrypoint.sh"]

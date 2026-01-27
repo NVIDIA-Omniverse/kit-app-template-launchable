@@ -17,35 +17,58 @@
 set -xeuo pipefail
 
 ENV=${ENV:-instance}
+FORCE_WSS=${FORCE_WSS:-true}
 
-set_config() {
-  cp ./stream.config.json ./stream.config.json.tmp
-  jq \
-    "${@}" \
-    ./stream.config.json.tmp > ./stream.config.json
-}
+# Set default signaling port based on FORCE_WSS (443 for WSS, 80 for WS)
+if [[ "${FORCE_WSS}" == "true" ]]; then
+  DEFAULT_SIGNALING_PORT=443
+else
+  DEFAULT_SIGNALING_PORT=80
+fi
+SIGNALING_PORT=${SIGNALING_PORT:-${DEFAULT_SIGNALING_PORT}}
 
-main() {
+get_ip() {
   case ${ENV} in
     instance)
-      IP=$(nslookup $(hostname) | grep Address | head -2 | tail -1 | awk '{print $2}')
+      nslookup $(hostname) | grep Address | head -2 | tail -1 | awk '{print $2}'
       ;;
     localhost)
-      IP="127.0.0.1"
+      echo "127.0.0.1"
       ;;
     brev)
-      IP=$(curl https://icanhazip.com)
+      curl -s https://icanhazip.com
       ;;
     *)
-      echo "Env ${ENV} not understood"
+      echo "Env ${ENV} not understood" >&2
       exit 1
       ;;
   esac
+}
 
-  set_config '.source = "local"'
-  set_config ".local.server = \"${IP}\""
+main() {
+  # Get IP address for media server
+  IP=$(get_ip)
 
-  exec npm run dev
+  # Signaling server defaults to window.location.hostname (evaluated in browser)
+  # Can be overridden via SIGNALING_SERVER env var (e.g., for testing with specific IP)
+  SIGNALING_SERVER=${SIGNALING_SERVER:-window.location.hostname}
+
+  # Media server uses IP address (can be overridden via MEDIA_SERVER env var)
+  MEDIA_SERVER=${MEDIA_SERVER:-${IP}}
+
+  echo "Configuring stream settings:"
+  echo "  SIGNALING_SERVER: ${SIGNALING_SERVER}"
+  echo "  SIGNALING_PORT: ${SIGNALING_PORT}"
+  echo "  MEDIA_SERVER: ${MEDIA_SERVER}"
+  echo "  FORCE_WSS: ${FORCE_WSS}"
+
+  # Patch the stream config placeholders with actual values
+  sed -i "s/__SIGNALING_SERVER__/${SIGNALING_SERVER}/" /app/web-viewer-sample/src/main.ts
+  sed -i "s/__SIGNALING_PORT__/${SIGNALING_PORT}/" /app/web-viewer-sample/src/main.ts
+  sed -i "s/__MEDIA_SERVER__/${MEDIA_SERVER}/" /app/web-viewer-sample/src/main.ts
+  sed -i "s/__FORCE_WSS__/${FORCE_WSS}/" /app/web-viewer-sample/src/main.ts
+
+  exec npm run dev -- --host 0.0.0.0
 }
 
 main "${@}"

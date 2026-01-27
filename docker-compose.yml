@@ -14,7 +14,6 @@
 # limitations under the License.
 
 volumes:
-  shared: 
   ov-cache:
   ov-local-share:
 
@@ -23,19 +22,11 @@ services:
   # This is the landing container. Expects $VSCODE_PASSWORD to be set.
   vscode:
     container_name: vscode
-    restart: unless-stopped
     network_mode: "host"
     runtime: nvidia
-    build:
-      context: ./vscode
-      args:
-        KIT_APP_TEMPLATE_BRANCH: ${KIT_APP_TEMPLATE_BRANCH:-108.1}
     volumes:
-      - 'shared:/kube'
-      - '/var/run/docker.sock:/var/run/docker.sock'
       - "ov-cache:/home/ubuntu/.cache/ov:rw"
       - "ov-local-share:/home/ubuntu/.local/share/ov/:rw"
-    privileged: true
     environment:
       - CUDA_VISIBLE_DEVICES=0
       - NVIDIA_VISIBLE_DEVICES=all
@@ -43,18 +34,19 @@ services:
       - PUID=0
       - PGID=0
       - TZ=Etc/UTC
-      - PASSWORD=$VSCODE_PASSWORD #optional
-      - SUDO_PASSWORD=$VSCODE_PASSWORD #optional
+      - PASSWORD=${VSCODE_PASSWORD:-}
+      - SUDO_PASSWORD=${VSCODE_PASSWORD:-}
       - DEFAULT_WORKSPACE=/config/workspace
       - KUBECONFIG=/kube/config
+    restart: unless-stopped
 
   nginx:
-    restart: unless-stopped
     network_mode: "host"
     depends_on:
       - vscode
+    restart: unless-stopped
 
-  web:
+  web-viewer:
     container_name: web-viewer
     restart: unless-stopped
     build:

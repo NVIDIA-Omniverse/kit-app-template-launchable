@@ -14,7 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 set -eux
- 
+
 WORKSPACE_DIR=${WORKSPACE_DIR:-$HOME/workspace}
+
+# Set auth mode based on PASSWORD env var
+if [ -z "${PASSWORD:-}" ]; then
+    AUTH_MODE="none"
+else
+    AUTH_MODE="password"
+fi
+
 code-server --bind-addr=127.0.0.1:8080 \
+    --auth="${AUTH_MODE}" \
     "${WORKSPACE_DIR}"
