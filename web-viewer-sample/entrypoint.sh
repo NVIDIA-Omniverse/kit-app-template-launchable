@@ -62,11 +62,12 @@ main() {
   echo "  MEDIA_SERVER: ${MEDIA_SERVER}"
   echo "  FORCE_WSS: ${FORCE_WSS}"
 
-  # Patch the stream config placeholders with actual values
-  sed -i "s/__SIGNALING_SERVER__/${SIGNALING_SERVER}/" /app/web-viewer-sample/src/main.ts
-  sed -i "s/__SIGNALING_PORT__/${SIGNALING_PORT}/" /app/web-viewer-sample/src/main.ts
-  sed -i "s/__MEDIA_SERVER__/${MEDIA_SERVER}/" /app/web-viewer-sample/src/main.ts
-  sed -i "s/__FORCE_WSS__/${FORCE_WSS}/" /app/web-viewer-sample/src/main.ts
+  # Patch the stream config with actual values (search for keys, not placeholders)
+  # This works on both first run and restarts where values may have changed
+  sed -i "s/signalingServer: [^,]*/signalingServer: ${SIGNALING_SERVER}/" /app/web-viewer-sample/src/main.ts
+  sed -i "s/signalingPort: [^,]*/signalingPort: ${SIGNALING_PORT}/" /app/web-viewer-sample/src/main.ts
+  sed -i "s/mediaServer: '[^']*'/mediaServer: '${MEDIA_SERVER}'/" /app/web-viewer-sample/src/main.ts
+  sed -i "s/forceWSS: [^,]*/forceWSS: ${FORCE_WSS}/" /app/web-viewer-sample/src/main.ts
 
   exec npm run dev -- --host 0.0.0.0
 }
