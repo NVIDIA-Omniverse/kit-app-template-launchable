@@ -64,7 +64,11 @@ main() {
 
   # Patch the stream config with actual values (search for keys, not placeholders)
   # This works on both first run and restarts where values may have changed
-  sed -i "s/signalingServer: [^,]*/signalingServer: ${SIGNALING_SERVER}/" /app/web-viewer-sample/src/main.ts
+  if [[ "${SIGNALING_SERVER}" == "window.location.hostname" ]]; then
+    sed -i "s|signalingServer: [^,]*|signalingServer: ${SIGNALING_SERVER}|" /app/web-viewer-sample/src/main.ts
+  else
+    sed -i "s|signalingServer: [^,]*|signalingServer: '${SIGNALING_SERVER}'|" /app/web-viewer-sample/src/main.ts
+  fi
   sed -i "s/signalingPort: [^,]*/signalingPort: ${SIGNALING_PORT}/" /app/web-viewer-sample/src/main.ts
   sed -i "s/mediaServer: '[^']*'/mediaServer: '${MEDIA_SERVER}'/" /app/web-viewer-sample/src/main.ts
   sed -i "s/forceWSS: [^,]*/forceWSS: ${FORCE_WSS}/" /app/web-viewer-sample/src/main.ts
