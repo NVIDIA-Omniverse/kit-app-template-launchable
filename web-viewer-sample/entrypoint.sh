@@ -30,7 +30,7 @@ SIGNALING_PORT=${SIGNALING_PORT:-${DEFAULT_SIGNALING_PORT}}
 get_ip() {
   case ${ENV} in
     instance)
-      nslookup $(hostname) | grep Address | head -2 | tail -1 | awk '{print $2}'
+      nslookup "$(hostname)" | grep Address | head -2 | tail -1 | awk '{print $2}'
       ;;
     localhost)
       echo "127.0.0.1"
