@@ -27,6 +27,11 @@ else
 fi
 SIGNALING_PORT=${SIGNALING_PORT:-${DEFAULT_SIGNALING_PORT}}
 
+if ! [[ "${SIGNALING_PORT}" =~ ^[0-9]+$ ]] || (( 10#${SIGNALING_PORT} < 1 || 10#${SIGNALING_PORT} > 65535 )); then
+  echo "SIGNALING_PORT must be an integer between 1 and 65535" >&2
+  exit 1
+fi
+
 get_ip() {
   case ${ENV} in
     instance)
